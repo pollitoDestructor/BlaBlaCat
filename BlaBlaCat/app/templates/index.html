@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cuidado de Mascotas</title>
+    <title>BlaBlaCat</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
@@ -55,7 +55,12 @@
     <template id="tpl-solicitudes">
         <section>
             <h2>Mis solicitudes</h2>
-            <button id="btn-nueva-solicitud">Nueva solicitud</button>
+            <form id="form-solicitud">
+                <input type="text" name="nombre" placeholder="Nombre de la mascota..." required>
+                <input type="text" name="especie" placeholder="Especie de la mascota..." required>
+                <input type="text" name="raza" placeholder="Raza de la mascota... (opcional)">
+                <button type="submit">Publicar Solicitud</button>
+            </form>
             <ul id="lista-solicitudes"></ul>
         </section>
     </template>

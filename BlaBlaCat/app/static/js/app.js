@@ -81,8 +81,11 @@ function renderSolicitudes() {
     app.innerHTML = ""
     app.appendChild(cloneTemplate("tpl-solicitudes"))
 
-    document.getElementById("btn-nueva-solicitud")
-        .addEventListener("click", () => crearSolicitud())
+    document.getElementById("form-solicitud").addEventListener("submit", async (e) => {
+        e.preventDefault()
+        const data = Object.fromEntries(new FormData(e.target))
+        await crear_solicitud(data)
+    })
 
     cargarSolicitudes()
 }
