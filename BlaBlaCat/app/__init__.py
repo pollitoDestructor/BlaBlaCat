@@ -17,7 +17,7 @@ def create_app():
     from .routes.solicitudes import solicitudes_bp
     from .routes.auth import auth_bp
 
-    app.register_blueprint(solicitudes_bp, url_prefix="/api/users")
+    app.register_blueprint(solicitudes_bp, url_prefix="/api/solicitudes")
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
 
     # Crear tablas si no existen

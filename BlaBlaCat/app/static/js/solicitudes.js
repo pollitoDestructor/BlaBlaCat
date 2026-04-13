@@ -38,9 +38,20 @@ async function cargarSolicitudes() {
     }
 }
 
-async function crearSolicitud() {
+async function crearSolicitud(datos) {
+    // solicitudes.js — en crearSolicitud
+
     try {
-        await apiFetch(API, { method: "POST", body: JSON.stringify({}) })
+        datos.usuario_id = localStorage.getItem("usuario_id")
+        await apiFetch(API, {
+            method: "POST",
+            body: JSON.stringify({
+                usuario_id: datos.usuario_id,
+                nombre:     datos.nombre,
+                especie:    datos.especie,
+                raza:       datos.raza,
+            })
+        })
         await cargarSolicitudes()
     } catch (error) {
         mostrarError(error.message)
@@ -70,8 +81,8 @@ function renderListaSolicitudes(solicitudes) {
 
     lista.innerHTML = solicitudes.map(s => `
         <li>
-            <span>Solicitud #${s.id} — ${s.created_at}</span>
-            <button onclick="eliminarSolicitud(${s.id})">Eliminar</button>
+            <strong>${s.nombre}</strong> — ${s.especie} (${s.raza})
+            <button onclick="eliminarSolicitud">Eliminar</button>
         </li>
     `).join("")
 }

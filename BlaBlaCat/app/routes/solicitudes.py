@@ -7,10 +7,16 @@ solicitudes_bp = Blueprint("solicitudes", __name__)
 
 @solicitudes_bp.route("/", methods=["GET"])
 def get_solicitudes():
-    #solicitudes = Solicitud.query.all()
-    #resultado = [{"id": s.id, "usuario_id": s.usuario_id, "created_at": str(s.created_at)} for s in solicitudes]
-    #return jsonify(resultado), 200
-    return None
+    solicitudes = Solicitud.query.all()
+    resultado = [
+        {
+            "nombre":     s.nombre,
+            "especie":    s.especie,
+            "raza":       s.raza,
+        }
+        for s in solicitudes
+    ]
+    return jsonify(resultado), 200
 
 
 @solicitudes_bp.route("/", methods=["POST"])

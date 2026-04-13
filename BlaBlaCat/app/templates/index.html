@@ -53,17 +53,17 @@
     </template>
 
     <template id="tpl-solicitudes">
-        <section>
-            <h2>Mis solicitudes</h2>
-            <form id="form-solicitud">
-                <input type="text" name="nombre" placeholder="Nombre de la mascota..." required>
-                <input type="text" name="especie" placeholder="Especie de la mascota..." required>
-                <input type="text" name="raza" placeholder="Raza de la mascota... (opcional)">
-                <button type="submit">Publicar Solicitud</button>
-            </form>
-            <ul id="lista-solicitudes"></ul>
-        </section>
-    </template>
+    <section>
+        <h2>Mis solicitudes</h2>
+        <form id="form-nueva-solicitud">
+            <input type="text" name="nombre"  placeholder="Nombre de la mascota" required>
+            <input type="text" name="especie" placeholder="Especie" required>
+            <input type="text" name="raza"    placeholder="Raza" required>
+            <button type="submit">Nueva solicitud</button>
+        </form>
+        <ul id="lista-solicitudes"></ul>
+    </section>
+</template>
 
     <template id="tpl-404">
         <section>

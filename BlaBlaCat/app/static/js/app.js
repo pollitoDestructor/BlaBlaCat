@@ -32,9 +32,9 @@ function cloneTemplate(id) {
 }
 
 function actualizarNav() {
-    const logueado = !!localStorage.getItem("token")
-    document.getElementById("nav-login").style.display  = logueado ? "none"  : "inline"
-    document.getElementById("nav-logout").style.display = logueado ? "inline": "none"
+    const logueado = !!localStorage.getItem("usuario_id")
+    document.getElementById("nav-login").style.display  = logueado ? "none"   : "inline"
+    document.getElementById("nav-logout").style.display = logueado ? "inline" : "none"
 }
 
 // ─── Vistas ───────────────────────────────────────────────
@@ -50,7 +50,11 @@ function renderNotFound() {
 }
 
 function renderLogin() {
-    if (localStorage.getItem("token")) return navigate(event, "/solicitudes")
+    if (localStorage.getItem("usuario_id")) {
+        window.history.pushState({}, "", "/solicitudes")
+        render("/solicitudes")
+        return
+    }
 
     app.innerHTML = ""
     app.appendChild(cloneTemplate("tpl-login"))
@@ -63,7 +67,11 @@ function renderLogin() {
 }
 
 function renderRegistro() {
-    if (localStorage.getItem("token")) return navigate(event, "/solicitudes")
+    if (localStorage.getItem("usuario_id")) {
+        window.history.pushState({}, "", "/solicitudes")
+        render("/solicitudes")
+        return
+    }
 
     app.innerHTML = ""
     app.appendChild(cloneTemplate("tpl-registro"))
@@ -76,17 +84,25 @@ function renderRegistro() {
 }
 
 function renderSolicitudes() {
-    if (!localStorage.getItem("token")) return navigate(event, "/login")
+    if (!localStorage.getItem("usuario_id")) {
+        window.history.pushState({}, "", "/login")
+        render("/login")
+        return
+    }
 
     app.innerHTML = ""
     app.appendChild(cloneTemplate("tpl-solicitudes"))
 
-    document.getElementById("form-solicitud").addEventListener("submit", async (e) => {
-        e.preventDefault()
-        const data = Object.fromEntries(new FormData(e.target))
-        await crear_solicitud(data)
-    })
+    const form = document.getElementById("form-nueva-solicitud")
+    console.log("Formulario encontrado:", form)  // debe mostrar el elemento, no null
 
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault()
+        const datos = Object.fromEntries(new FormData(e.target))
+        datos.usuario_id = localStorage.getItem("usuario_id")
+        await crearSolicitud(datos)
+        e.target.reset()
+    });
     cargarSolicitudes()
 }
 
