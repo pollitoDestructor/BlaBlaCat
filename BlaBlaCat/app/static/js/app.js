@@ -5,10 +5,12 @@ const app = document.getElementById("app")
 // ─── Router ───────────────────────────────────────────────
 
 const routes = {
-    "/":            renderHome,
-    "/login":       renderLogin,
-    "/registro":    renderRegistro,
-    "/solicitudes": renderSolicitudes,
+    "/":                  renderHome,
+    "/login":             renderLogin,
+    "/registro":          renderRegistro,
+    "/solicitudes":       renderSolicitudes,
+    "/admin/usuarios":    renderAdminUsuarios,    // #276 / #298
+    "/admin/solicitudes": renderAdminSolicitudes, // #300
 }
 
 function navigate(event, path) {
@@ -33,11 +35,20 @@ function cloneTemplate(id) {
 
 function actualizarNav() {
     const logueado = !!localStorage.getItem("usuario_id")
-    document.getElementById("nav-login").style.display  = logueado ? "none"   : "inline"
-    document.getElementById("nav-logout").style.display = logueado ? "inline" : "none"
+    const esAdmin  = localStorage.getItem("rol") === "administrador"
+
+    document.getElementById("nav-login").style.display     = logueado              ? "none"   : "inline"
+    document.getElementById("nav-logout").style.display    = logueado              ? "inline" : "none"
+    document.getElementById("nav-admin").style.display     = esAdmin               ? "inline" : "none"
+    document.getElementById("nav-solicitudes").style.display = (logueado && !esAdmin) ? "inline" : "none"
+
+    if (logueado) {
+        const label = document.getElementById("nav-username")
+        if (label) label.textContent = localStorage.getItem("username") || ""
+    }
 }
 
-// ─── Vistas ───────────────────────────────────────────────
+// ─── Vistas públicas ──────────────────────────────────────
 
 function renderHome() {
     app.innerHTML = ""
@@ -51,8 +62,9 @@ function renderNotFound() {
 
 function renderLogin() {
     if (localStorage.getItem("usuario_id")) {
-        window.history.pushState({}, "", "/solicitudes")
-        render("/solicitudes")
+        const destino = localStorage.getItem("rol") === "administrador" ? "/admin/usuarios" : "/solicitudes"
+        window.history.pushState({}, "", destino)
+        render(destino)
         return
     }
 
@@ -61,8 +73,7 @@ function renderLogin() {
 
     document.getElementById("form-login").addEventListener("submit", async (e) => {
         e.preventDefault()
-        const data = Object.fromEntries(new FormData(e.target))
-        await login(data)
+        await login(Object.fromEntries(new FormData(e.target)))
     })
 }
 
@@ -78,8 +89,7 @@ function renderRegistro() {
 
     document.getElementById("form-registro").addEventListener("submit", async (e) => {
         e.preventDefault()
-        const data = Object.fromEntries(new FormData(e.target))
-        await registro(data)
+        await registro(Object.fromEntries(new FormData(e.target)))
     })
 }
 
@@ -93,16 +103,14 @@ function renderSolicitudes() {
     app.innerHTML = ""
     app.appendChild(cloneTemplate("tpl-solicitudes"))
 
-    const form = document.getElementById("form-nueva-solicitud")
-    console.log("Formulario encontrado:", form)  // debe mostrar el elemento, no null
-
-    form.addEventListener("submit", async (e) => {
+    document.getElementById("form-nueva-solicitud").addEventListener("submit", async (e) => {
         e.preventDefault()
         const datos = Object.fromEntries(new FormData(e.target))
         datos.usuario_id = localStorage.getItem("usuario_id")
         await crearSolicitud(datos)
         e.target.reset()
-    });
+    })
+
     cargarSolicitudes()
 }
 
