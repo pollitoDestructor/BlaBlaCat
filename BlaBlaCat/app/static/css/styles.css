@@ -1,0 +1,452 @@
+
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=Nunito:wght@400;500;600;700&display=swap');
+
+/* ── Variables ──────────────────────────────────────────── */
+:root {
+  --brown-deep:    #6B3F1F;
+  --brown:         #A0662A;
+  --brown-light:   #C8955A;
+  --brown-pale:    #EDD9BF;
+
+  --purple-deep:   #4A2D6B;
+  --purple:        #7B5EA7;
+  --purple-light:  #A98DD4;
+  --purple-pale:   #E8DFF5;
+
+  --cream:         #FAF6F0;
+  --cream-dark:    #F0E8D8;
+  --text:          #2C1A0E;
+  --text-muted:    #8C7060;
+  --white:         #FFFFFF;
+
+  --danger:        #C0392B;
+  --danger-light:  #FADBD8;
+  --success:       #1E8449;
+  --success-light: #D5F5E3;
+
+  --radius-sm:     6px;
+  --radius:        14px;
+  --radius-lg:     22px;
+
+  --shadow-sm:     0 2px 8px rgba(107, 63, 31, .10);
+  --shadow:        0 6px 24px rgba(107, 63, 31, .14);
+  --shadow-lg:     0 16px 48px rgba(107, 63, 31, .16);
+
+  --transition:    .22s cubic-bezier(.4, 0, .2, 1);
+}
+
+/* ── Reset ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background-color: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  /* Patrón de huellitas sutil como textura de fondo */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23A0662A' fill-opacity='0.045'%3E%3Cellipse cx='20' cy='18' rx='4' ry='5'/%3E%3Cellipse cx='30' cy='14' rx='3.5' ry='4.5'/%3E%3Cellipse cx='38' cy='18' rx='3.5' ry='4.5'/%3E%3Cellipse cx='44' cy='26' rx='3' ry='4'/%3E%3Cellipse cx='29' cy='28' rx='9' ry='11'/%3E%3Cellipse cx='60' cy='58' rx='4' ry='5'/%3E%3Cellipse cx='70' cy='54' rx='3.5' ry='4.5'/%3E%3Cellipse cx='78' cy='58' rx='3.5' ry='4.5'/%3E%3Cellipse cx='84' cy='66' rx='3' ry='4'/%3E%3Cellipse cx='69' cy='68' rx='9' ry='11'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ── Tipografía ─────────────────────────────────────────── */
+h1, h2, h3, h4 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--brown-deep);
+}
+h1 { font-size: 2.4rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.3rem; }
+
+p  { line-height: 1.7; color: var(--text-muted); }
+a  { color: var(--purple); text-decoration: none; transition: color var(--transition); }
+a:hover { color: var(--purple-deep); }
+
+/* ── Navbar ─────────────────────────────────────────────── */
+nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: .9rem 2rem;
+  background: var(--white);
+  border-bottom: 2px solid var(--cream-dark);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  text-decoration: none;
+  margin-right: auto;   /* empuja el resto a la derecha */
+}
+
+.nav-logo img {
+  height: 40px;
+  width: auto;
+}
+
+.nav-logo .nav-brand {
+  font-family: 'Fraunces', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--brown-deep);
+  letter-spacing: -.02em;
+}
+
+.nav-logo .nav-brand span {
+  color: var(--purple);
+}
+
+nav a:not(.nav-logo) {
+  font-weight: 600;
+  font-size: .92rem;
+  color: var(--text-muted);
+  padding: .4rem .75rem;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition), color var(--transition);
+}
+
+nav a:not(.nav-logo):hover {
+  background: var(--purple-pale);
+  color: var(--purple-deep);
+}
+
+#nav-username {
+  font-weight: 700;
+  color: var(--brown);
+  font-size: .92rem;
+}
+
+/* ── Contenedor principal ───────────────────────────────── */
+#app {
+  max-width: 900px;
+  margin: 2.5rem auto;
+  padding: 0 1.5rem 4rem;
+  animation: fadeUp .35s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Cards ──────────────────────────────────────────────── */
+section {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--shadow);
+  border: 1.5px solid var(--cream-dark);
+}
+
+/* ── Formularios ────────────────────────────────────────── */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+  margin-top: 1.2rem;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="datetime-local"],
+textarea {
+  width: 100%;
+  padding: .75rem 1rem;
+  border: 2px solid var(--cream-dark);
+  border-radius: var(--radius);
+  font-family: 'Nunito', sans-serif;
+  font-size: .95rem;
+  color: var(--text);
+  background: var(--cream);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--purple-light);
+  box-shadow: 0 0 0 3px rgba(123, 94, 167, .15);
+  background: var(--white);
+}
+
+/* ── Botones ────────────────────────────────────────────── */
+button[type="submit"],
+.btn-primary {
+  padding: .8rem 1.6rem;
+  background: linear-gradient(135deg, var(--brown) 0%, var(--purple) 100%);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: .95rem;
+  cursor: pointer;
+  letter-spacing: .02em;
+  transition: opacity var(--transition), transform var(--transition), box-shadow var(--transition);
+  box-shadow: 0 4px 16px rgba(160, 102, 42, .30);
+  align-self: flex-start;
+}
+
+button[type="submit"]:hover,
+.btn-primary:hover {
+  opacity: .88;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(160, 102, 42, .38);
+}
+
+button[type="submit"]:active,
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-danger {
+  padding: .35rem .8rem;
+  background: var(--white);
+  color: var(--danger);
+  border: 2px solid var(--danger);
+  border-radius: var(--radius-sm);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: .82rem;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.btn-danger:hover {
+  background: var(--danger);
+  color: var(--white);
+}
+
+.btn-danger:disabled {
+  border-color: #ccc;
+  color: #ccc;
+  cursor: not-allowed;
+  background: transparent;
+}
+
+/* ── Mensajes de error ──────────────────────────────────── */
+.error-msg {
+  color: var(--danger);
+  background: var(--danger-light);
+  border-radius: var(--radius-sm);
+  padding: .5rem .85rem;
+  font-size: .88rem;
+  font-weight: 600;
+  margin-top: .25rem;
+}
+
+/* ── Listas de solicitudes ──────────────────────────────── */
+#lista-solicitudes {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  margin-top: 1.5rem;
+}
+
+#lista-solicitudes li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .9rem 1.2rem;
+  background: var(--cream);
+  border-radius: var(--radius);
+  border: 1.5px solid var(--cream-dark);
+  font-size: .93rem;
+  transition: box-shadow var(--transition);
+}
+
+#lista-solicitudes li:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+#lista-solicitudes strong {
+  color: var(--brown-deep);
+}
+
+/* ── Tablas admin ───────────────────────────────────────── */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1.2rem;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+thead th {
+  background: var(--brown-deep);
+  color: var(--brown-pale);
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: .9rem;
+  letter-spacing: .04em;
+  padding: .85rem 1rem;
+  text-align: left;
+}
+
+tbody tr {
+  background: var(--white);
+  transition: background var(--transition);
+}
+
+tbody tr:nth-child(even) {
+  background: var(--cream);
+}
+
+tbody tr:hover {
+  background: var(--purple-pale);
+}
+
+tbody td {
+  padding: .75rem 1rem;
+  font-size: .9rem;
+  border-bottom: 1px solid var(--cream-dark);
+  vertical-align: middle;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ── Badges de rol ──────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: .2rem .65rem;
+  border-radius: 99px;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.badge-administrador {
+  background: var(--purple-pale);
+  color: var(--purple-deep);
+  border: 1.5px solid var(--purple-light);
+}
+
+.badge-estandar {
+  background: var(--brown-pale);
+  color: var(--brown-deep);
+  border: 1.5px solid var(--brown-light);
+}
+
+/* ── Imagen miniatura de mascota ────────────────────────── */
+.mascota-thumb {
+  width: 46px;
+  height: 46px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid var(--brown-light);
+}
+
+/* ── Home ───────────────────────────────────────────────── */
+.home-hero {
+  text-align: center;
+  padding: 3rem 2rem 2rem;
+}
+
+.home-hero h1 {
+  font-size: 2.8rem;
+  margin-bottom: .6rem;
+}
+
+.home-hero h1 em {
+  color: var(--purple);
+  font-style: italic;
+}
+
+.home-hero p {
+  font-size: 1.1rem;
+  max-width: 480px;
+  margin: 0 auto 2rem;
+}
+
+.home-cta {
+  display: inline-flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.home-cta a {
+  display: inline-block;
+  padding: .85rem 2rem;
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: 1rem;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.home-cta .cta-main {
+  background: linear-gradient(135deg, var(--brown) 0%, var(--purple) 100%);
+  color: var(--white);
+  box-shadow: 0 4px 16px rgba(160,102,42,.30);
+}
+
+.home-cta .cta-main:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(160,102,42,.40);
+  color: var(--white);
+}
+
+.home-cta .cta-secondary {
+  background: var(--white);
+  color: var(--purple);
+  border: 2px solid var(--purple);
+}
+
+.home-cta .cta-secondary:hover {
+  background: var(--purple-pale);
+  transform: translateY(-3px);
+}
+
+/* ── Admin nav secundaria ───────────────────────────────── */
+.admin-back {
+  display: inline-block;
+  margin-bottom: 1.2rem;
+  font-size: .88rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.admin-back:hover { color: var(--purple); }
+
+/* ── Página login / registro ────────────────────────────── */
+.auth-section {
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.auth-section h2 {
+  margin-bottom: .25rem;
+}
+
+.auth-section > p {
+  margin-top: 1.2rem;
+  font-size: .9rem;
+  text-align: center;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 640px) {
+  nav { padding: .75rem 1rem; gap: .5rem; }
+  #app { margin: 1.2rem auto; padding: 0 .9rem 3rem; }
+  section { padding: 1.6rem 1.2rem; }
+  h1 { font-size: 1.9rem; }
+  h2 { font-size: 1.4rem; }
+  table { font-size: .82rem; }
+  thead th, tbody td { padding: .6rem .7rem; }
+}
