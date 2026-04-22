@@ -39,6 +39,8 @@ async function cargarSolicitudes() {
 }
 
 async function crearSolicitud(datos) {
+    // solicitudes.js — en crearSolicitud
+
     try {
         datos.usuario_id = localStorage.getItem("usuario_id")
         await apiFetch(API, {
@@ -49,34 +51,6 @@ async function crearSolicitud(datos) {
                 especie:    datos.especie,
                 raza:       datos.raza,
             })
-        })
-        await cargarSolicitudes()
-    } catch (error) {
-        mostrarError(error.message)
-    }
-}
-
-async function modificarSolicitud(id) {
-    const usuario_id = localStorage.getItem("usuario_id")
-    const nombre = prompt("Nuevo nombre:")
-    const especie = prompt("Nueva especie:")
-    const raza = prompt("Nueva raza:")
-
-    if (nombre === null && especie === null && raza === null) {
-        return
-    }
-
-    const payload = {
-        usuario_id,
-    }
-    if (nombre !== null && nombre !== "") payload.nombre = nombre
-    if (especie !== null && especie !== "") payload.especie = especie
-    if (raza !== null && raza !== "") payload.raza = raza
-
-    try {
-        await apiFetch(`${API}/${id}`, {
-            method: "PUT",
-            body: JSON.stringify(payload),
         })
         await cargarSolicitudes()
     } catch (error) {
@@ -108,8 +82,7 @@ function renderListaSolicitudes(solicitudes) {
     lista.innerHTML = solicitudes.map(s => `
         <li>
             <strong>${s.nombre}</strong> — ${s.especie} (${s.raza})
-            <button onclick="modificarSolicitud(${s.id})">Modificar</button>
-            <button onclick="eliminarSolicitud(${s.id})">Eliminar</button>
+            <button onclick="eliminarSolicitud">Eliminar</button>
         </li>
     `).join("")
 }

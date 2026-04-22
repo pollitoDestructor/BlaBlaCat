@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ac3f3065-42a4-4774-93f9-5df11a439d63" name="Changes" comment="Css y apartado visual" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="testeo-kroko" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Kroko04&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/pollitoDestructor/BlaBlaCat.git&quot;,
+    &quot;accountId&quot;: &quot;bb7449ef-b99f-4368-b2eb-6bf0ecad0b6b&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="3CMo0649P0rg6yn87ZvGqjVs5Tn" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.__init__.executor": "Run",
+    "Python.run.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-164cda30dcd9-0af03a5fa574-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.26830.99" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ac3f3065-42a4-4774-93f9-5df11a439d63" name="Changes" comment="" />
+      <created>1776204574448</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1776204574448</updated>
+    </task>
+    <task id="LOCAL-00001" summary="cambio en solicitud y usuarios.py, añadir otros modelos">
+      <option name="closed" value="true" />
+      <created>1776592504918</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1776592504918</updated>
+    </task>
+    <task id="LOCAL-00002" summary="creacion de las funciones de admin y camibios en la inicializacion de la app">
+      <option name="closed" value="true" />
+      <created>1776593496734</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1776593496734</updated>
+    </task>
+    <task id="LOCAL-00003" summary="implementacion de registro de usuario, se ha añadido un admin fijo para comprobaciones de funcionalidad. cambios en el html para mostrar solo las funciones necesarias a cada rol">
+      <option name="closed" value="true" />
+      <created>1776595817800</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1776595817800</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Css y apartado visual">
+      <option name="closed" value="true" />
+      <created>1776778222114</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1776778222114</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Css y apartado visual">
+      <option name="closed" value="true" />
+      <created>1776848299914</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1776848299914</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Css y apartado visual">
+      <option name="closed" value="true" />
+      <created>1776848340161</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1776848340161</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="cambio en solicitud y usuarios.py, añadir otros modelos" />
+    <MESSAGE value="creacion de las funciones de admin y camibios en la inicializacion de la app" />
+    <MESSAGE value="implementacion de registro de usuario, se ha añadido un admin fijo para comprobaciones de funcionalidad. cambios en el html para mostrar solo las funciones necesarias a cada rol" />
+    <MESSAGE value="Css y apartado visual" />
+    <option name="LAST_COMMIT_MESSAGE" value="Css y apartado visual" />
+  </component>
+</project>

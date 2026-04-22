@@ -7,16 +7,9 @@ solicitudes_bp = Blueprint("solicitudes", __name__)
 
 @solicitudes_bp.route("/", methods=["GET"])
 def get_solicitudes():
-    usuario_id = request.args.get("usuario_id")
-    query = Solicitud.query
-    if usuario_id:
-        query = query.filter_by(usuario_id=usuario_id)
-
-    solicitudes = query.all()
+    solicitudes = Solicitud.query.all()
     resultado = [
         {
-            "id":         s.id,
-            "usuario_id": s.usuario_id,
             "nombre":     s.nombre,
             "especie":    s.especie,
             "raza":       s.raza,
