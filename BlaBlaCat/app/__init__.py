@@ -1,5 +1,6 @@
 # app/__init__.py
 from flask import Flask, render_template
+import mimetypes
 from .extensions import db, ma
 from .config import Config
 
@@ -31,6 +32,8 @@ def _seed_admin():
 
 
 def create_app():
+    mimetypes.add_type("application/javascript", ".js")
+    mimetypes.add_type("text/css", ".css")
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(Config)
 

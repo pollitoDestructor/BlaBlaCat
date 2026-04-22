@@ -16,9 +16,11 @@
                  onerror="this.style.display='none'">
             <span class="nav-brand">Bla<span>Bla</span>Cat</span>
         </a>
-
+        
+        <a href="/proximas" onclick="navigate(event, '/proximas')">Todas las solicitudes</a>
         <a href="/solicitudes" onclick="navigate(event, '/solicitudes')"
            id="nav-solicitudes" style="display:none">Mis solicitudes</a>
+           
 
         <span id="nav-admin" style="display:none">
             <a href="/admin/usuarios"    onclick="navigate(event, '/admin/usuarios')">👥 Usuarios</a>
@@ -31,6 +33,8 @@
             &nbsp;·&nbsp;
             <a href="#" onclick="logout()">Salir</a>
         </span>
+
+
     </nav>
 
     <!-- ══ SPA container ═══════════════════════════════════ -->
@@ -75,17 +79,20 @@
     </template>
 
     <template id="tpl-solicitudes">
-        <section>
-            <h2>Mis solicitudes</h2>
-            <form id="form-nueva-solicitud">
-                <input type="text" name="nombre"  placeholder="Nombre de la mascota" required>
-                <input type="text" name="especie" placeholder="Especie"              required>
-                <input type="text" name="raza"    placeholder="Raza (opcional)">
-                <button type="submit">+ Nueva solicitud</button>
-            </form>
-            <ul id="lista-solicitudes"></ul>
-        </section>
-    </template>
+    <section>
+        <h2>Mis solicitudes</h2>
+        <form id="form-nueva-solicitud">
+            <input type="text"          name="nombre"          placeholder="Nombre de la mascota" required>
+            <input type="text"          name="especie"         placeholder="Especie" required>
+            <input type="text"          name="raza"            placeholder="Raza">
+            <input type="datetime-local" name="horario_inicio" required>
+            <input type="datetime-local" name="horario_fin"    required>
+            <textarea                   name="especificaciones" placeholder="Especificaciones"></textarea>
+            <button type="submit">Nueva solicitud</button>
+        </form>
+        <ul id="lista-solicitudes"></ul>
+    </section>
+</template>
 
     <template id="tpl-admin-usuarios">
         <section>
@@ -108,6 +115,19 @@
             <h2>🐾 Catálogo de mascotas</h2>
             <a href="/admin/usuarios" onclick="navigate(event, '/admin/usuarios')"
                class="admin-back">👥 Ver usuarios →</a>
+               <section>
+        <h2>Mis solicitudes</h2>
+        <form id="form-nueva-solicitud">
+            <input type="text"          name="nombre"          placeholder="Nombre de la mascota" required>
+            <input type="text"          name="especie"         placeholder="Especie" required>
+            <input type="text"          name="raza"            placeholder="Raza">
+            <input type="datetime-local" name="horario_inicio" required>
+            <input type="datetime-local" name="horario_fin"    required>
+            <textarea                   name="especificaciones" placeholder="Especificaciones"></textarea>
+            <button type="submit">Nueva solicitud</button>
+        </form>
+        <ul id="lista-solicitudes"></ul>
+    </section>
             <table>
                 <thead>
                     <tr><th>ID</th><th>Foto</th><th>Nombre</th><th>Especie / Raza</th><th>Propietario</th><th>Inicio</th><th>Fin</th></tr>
@@ -118,6 +138,13 @@
             </table>
         </section>
     </template>
+
+    <template id="tpl-proximas">
+    <section>
+        <h2>Próximas solicitudes</h2>
+        <ul id="lista-proximas"></ul>
+    </section>
+</template>
 
     <template id="tpl-404">
         <section style="text-align:center; padding:3rem 2rem;">
@@ -133,9 +160,9 @@
     </template>
 
     <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/solicitudes.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+<script src="{{ url_for('static', filename='js/solicitudes.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
 </body>
 </html>

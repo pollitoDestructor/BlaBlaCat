@@ -1,5 +1,6 @@
 # app/routes/solicitudes.py
 from flask import Blueprint, request, jsonify
+from datetime import datetime
 from ..extensions import db
 from ..model.solicitudes import Solicitud
 
@@ -18,7 +19,7 @@ def get_solicitudes():
 
     resultado = [
         {
-            "id":               s.id,               # ← antes faltaba este campo
+            "id":               s.id,               
             "nombre":           s.nombre,
             "especie":          s.especie,
             "raza":             s.raza,
@@ -75,3 +76,20 @@ def eliminar_solicitud(id):
     db.session.delete(solicitud)
     db.session.commit()
     return jsonify({"mensaje": "Solicitud eliminada"}), 200
+
+@solicitudes_bp.route("/proximas", methods=["GET"])
+def get_proximas():
+    ahora = datetime.utcnow()
+    solicitudes = Solicitud.query.filter(Solicitud.horario_inicio > ahora).all()
+    resultado = [
+        {
+            "id":             s.id,
+            "nombre":         s.nombre,
+            "especie":        s.especie,
+            "raza":           s.raza,
+            "horario_inicio": s.horario_inicio.isoformat() if s.horario_inicio else None,
+            "horario_fin":    s.horario_fin.isoformat()    if s.horario_fin    else None,
+        }
+        for s in solicitudes
+    ]
+    return jsonify(resultado), 200

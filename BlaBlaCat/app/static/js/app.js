@@ -11,6 +11,7 @@ const routes = {
     "/solicitudes":       renderSolicitudes,
     "/admin/usuarios":    renderAdminUsuarios,    // #276 / #298
     "/admin/solicitudes": renderAdminSolicitudes, // #300
+    "/proximas":          renderProximas,
 }
 
 function navigate(event, path) {
@@ -103,7 +104,10 @@ function renderSolicitudes() {
     app.innerHTML = ""
     app.appendChild(cloneTemplate("tpl-solicitudes"))
 
-    document.getElementById("form-nueva-solicitud").addEventListener("submit", async (e) => {
+    const form = document.getElementById("form-nueva-solicitud")
+    console.log("Formulario:", form)
+
+    form.addEventListener("submit", async (e) => {
         e.preventDefault()
         const datos = Object.fromEntries(new FormData(e.target))
         datos.usuario_id = localStorage.getItem("usuario_id")

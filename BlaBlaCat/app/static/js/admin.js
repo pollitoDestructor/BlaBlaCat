@@ -125,3 +125,16 @@ async function cargarCatalogoSolicitudes() {
             `<tr><td colspan='7' class="error-msg">${error.message}</td></tr>`
     }
 }
+
+async function renderAdminSolicitudes() {
+    if (!requireAdminFrontend()) return
+
+    app.innerHTML = ""
+    app.appendChild(cloneTemplate("tpl-admin-solicitudes"))
+
+    console.log("app.innerHTML:", app.innerHTML)
+    const lista = document.getElementById("lista-admin-solicitudes")
+    console.log("lista encontrada:", lista)
+
+    await cargarCatalogoSolicitudes()
+}
