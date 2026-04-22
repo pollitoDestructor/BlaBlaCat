@@ -38,9 +38,46 @@ async function cargarSolicitudes() {
     }
 }
 
-async function crearSolicitud() {
+async function crearSolicitud(datos) {
     try {
-        await apiFetch(API, { method: "POST", body: JSON.stringify({}) })
+        datos.usuario_id = localStorage.getItem("usuario_id")
+        await apiFetch(API, {
+            method: "POST",
+            body: JSON.stringify({
+                usuario_id: datos.usuario_id,
+                nombre:     datos.nombre,
+                especie:    datos.especie,
+                raza:       datos.raza,
+            })
+        })
+        await cargarSolicitudes()
+    } catch (error) {
+        mostrarError(error.message)
+    }
+}
+
+async function modificarSolicitud(id) {
+    const usuario_id = localStorage.getItem("usuario_id")
+    const nombre = prompt("Nuevo nombre:")
+    const especie = prompt("Nueva especie:")
+    const raza = prompt("Nueva raza:")
+
+    if (nombre === null && especie === null && raza === null) {
+        return
+    }
+
+    const payload = {
+        usuario_id,
+    }
+    if (nombre !== null && nombre !== "") payload.nombre = nombre
+    if (especie !== null && especie !== "") payload.especie = especie
+    if (raza !== null && raza !== "") payload.raza = raza
+
+    try {
+        await apiFetch(`${API}/${id}`, {
+            method: "PUT",
+            body: JSON.stringify(payload),
+        })
         await cargarSolicitudes()
     } catch (error) {
         mostrarError(error.message)
@@ -70,7 +107,8 @@ function renderListaSolicitudes(solicitudes) {
 
     lista.innerHTML = solicitudes.map(s => `
         <li>
-            <span>Solicitud #${s.id} — ${s.created_at}</span>
+            <strong>${s.nombre}</strong> — ${s.especie} (${s.raza})
+            <button onclick="modificarSolicitud(${s.id})">Modificar</button>
             <button onclick="eliminarSolicitud(${s.id})">Eliminar</button>
         </li>
     `).join("")

@@ -39,11 +39,13 @@ async function apiFetch(url, options = {}) {
 
 async function login(data) {
     try {
+        // auth.js
         const res = await apiFetch(`${AUTH_API}/login`, {
             method: "POST",
             body: JSON.stringify(data),
         })
-
+        localStorage.setItem("usuario_id", res.usuario_id)
+        navigate({ preventDefault: () => {} }, "/solicitudes")
         setToken(res.access_token)
 
         // Redirigir a solicitudes
@@ -73,8 +75,9 @@ async function registro(data) {
 }
 
 function logout() {
-    removeToken()
-    navigate(event, "/login")
+    localStorage.removeItem("usuario_id")
+    window.history.pushState({}, "", "/login")
+    render("/login")
 }
 
 // ─── UI ───────────────────────────────────────────────────
@@ -93,3 +96,22 @@ function mostrarErrorAuth(mensaje) {
 
     error.textContent = mensaje
 }
+
+async function login(data) {
+    try {
+        const res = await apiFetch(`${AUTH_API}/login`, {
+            method: "POST",
+            body: JSON.stringify(data),
+        })
+        console.log("Respuesta del servidor:", res)
+        console.log("usuario_id recibido:", res.usuario_id)
+        localStorage.setItem("usuario_id", res.usuario_id)
+        console.log("Guardado en localStorage:", localStorage.getItem("usuario_id"))
+        window.history.pushState({}, "", "/solicitudes")
+        render("/solicitudes")
+    } catch (error) {
+        mostrarErrorAuth(error.message)
+    }
+}
+
+
