@@ -10,6 +10,8 @@ def get_solicitudes():
     solicitudes = Solicitud.query.all()
     resultado = [
         {
+            "id":         s.id,
+            "usuario_id": s.usuario_id,
             "nombre":     s.nombre,
             "especie":    s.especie,
             "raza":       s.raza,
@@ -58,3 +60,5 @@ def eliminar_solicitud(id):
     db.session.commit()
 
     return jsonify({"mensaje": "Solicitud eliminada"}), 200
+
+

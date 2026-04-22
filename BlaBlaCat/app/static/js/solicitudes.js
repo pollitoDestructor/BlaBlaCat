@@ -31,7 +31,9 @@ async function apiFetch(url, options = {}) {
 
 async function cargarSolicitudes() {
     try {
-        const solicitudes = await apiFetch(API)
+        const usuario_id = localStorage.getItem("usuario_id")
+        const url = usuario_id ? `${API}?usuario_id=${usuario_id}` : API
+        const solicitudes = await apiFetch(url)
         renderListaSolicitudes(solicitudes)
     } catch (error) {
         mostrarError(error.message)
@@ -82,7 +84,8 @@ function renderListaSolicitudes(solicitudes) {
     lista.innerHTML = solicitudes.map(s => `
         <li>
             <strong>${s.nombre}</strong> — ${s.especie} (${s.raza})
-            <button onclick="eliminarSolicitud">Eliminar</button>
+            <button onclick="modificarSolicitud(${s.id})">Modificar</button>
+            <button onclick="eliminarSolicitud(${s.id})">Eliminar</button>
         </li>
     `).join("")
 }
@@ -90,4 +93,36 @@ function renderListaSolicitudes(solicitudes) {
 function mostrarError(mensaje) {
     const lista = document.getElementById("lista-solicitudes")
     if (lista) lista.innerHTML = `<li class="error">${mensaje}</li>`
+}
+
+
+
+
+
+async function modificarSolicitud(id) {
+    const usuario_id = localStorage.getItem('usuario_id')
+    const nombre = prompt('Nuevo nombre:')
+    const especie = prompt('Nueva especie:')
+    const raza = prompt('Nueva raza:')
+
+    if (nombre === null && especie === null && raza === null) {
+        return
+    }
+
+    const payload = {
+        usuario_id,
+    }
+    if (nombre && nombre !== '') payload.nombre = nombre
+    if (especie && especie !== '') payload.especie = especie
+    if (raza && raza !== '') payload.raza = raza
+
+    try {
+        await apiFetch(`${API}/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(payload),
+        })
+        await cargarSolicitudes()
+    } catch (error) {
+        mostrarError(error.message)
+    }
 }
