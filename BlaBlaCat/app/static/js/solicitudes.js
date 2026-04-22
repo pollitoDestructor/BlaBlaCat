@@ -92,7 +92,15 @@ function renderListaSolicitudes(solicitudes) {
 
 function mostrarError(mensaje) {
     const lista = document.getElementById("lista-solicitudes")
-    if (lista) lista.innerHTML = `<li class="error">${mensaje}</li>`
+    if (lista) {
+        const errorLi = document.createElement("li")
+        errorLi.className = "error"
+        errorLi.textContent = mensaje
+        lista.appendChild(errorLi)
+        setTimeout(() => {
+            errorLi.remove()
+        }, 3000)
+    }
 }
 
 

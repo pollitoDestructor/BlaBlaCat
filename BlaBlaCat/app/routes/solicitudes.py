@@ -42,7 +42,11 @@ def modificar_solicitud(id):
     data = request.get_json()
     solicitud = Solicitud.query.get_or_404(id)
 
-    if solicitud.usuario_id != data.get("usuario_id"):
+    usuario_id = data.get("usuario_id")
+    if usuario_id is not None:
+        usuario_id = int(usuario_id)
+
+    if solicitud.usuario_id != usuario_id:
         return jsonify({"error": "No tienes permiso para modificar esta solicitud"}), 403
 
     solicitud.nombre = data.get("nombre", solicitud.nombre)
