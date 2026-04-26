@@ -12,6 +12,7 @@ class Usuario(db.Model):
 
     # Un usuario puede tener varias solicitudes
     solicitudes = db.relationship("Solicitud", back_populates="usuario", lazy=True)
+    inscripciones = db.relationship("Inscripcion", back_populates="usuario", lazy=True)
 
     def __repr__(self):
         return f"<User {self.username}>"

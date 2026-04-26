@@ -30,6 +30,10 @@ async function apiFetch(url, options = {}) {
 // ─── CRUD ─────────────────────────────────────────────────
 
 async function cargarSolicitudes() {
+    await Promise.all([cargarMisSolicitudes(), cargarSolicitudesDisponibles()])
+}
+
+async function cargarMisSolicitudes() {
     try {
         const usuario_id = localStorage.getItem("usuario_id")
         const url = usuario_id ? `${API}?usuario_id=${usuario_id}` : API
@@ -40,9 +44,20 @@ async function cargarSolicitudes() {
     }
 }
 
-async function crearSolicitud(datos) {
-    // solicitudes.js — en crearSolicitud
+async function cargarSolicitudesDisponibles() {
+    try {
+        const usuario_id = localStorage.getItem("usuario_id")
+        const url = usuario_id
+            ? `${API}?exclude_usuario_id=${usuario_id}&current_usuario_id=${usuario_id}`
+            : API
+        const solicitudes = await apiFetch(url)
+        renderListaSolicitudesAbiertas(solicitudes)
+    } catch (error) {
+        mostrarError(error.message)
+    }
+}
 
+async function crearSolicitud(datos) {
     try {
         datos.usuario_id = localStorage.getItem("usuario_id")
         await apiFetch(API, {
@@ -63,6 +78,32 @@ async function crearSolicitud(datos) {
 async function eliminarSolicitud(id) {
     try {
         await apiFetch(`${API}/${id}`, { method: "DELETE" })
+        await cargarSolicitudes()
+    } catch (error) {
+        mostrarError(error.message)
+    }
+}
+
+async function registrarseSolicitud(id) {
+    try {
+        const usuario_id = localStorage.getItem("usuario_id")
+        await apiFetch(`${API}/${id}/registrarse`, {
+            method: "POST",
+            body: JSON.stringify({ usuario_id }),
+        })
+        await cargarSolicitudes()
+    } catch (error) {
+        mostrarError(error.message)
+    }
+}
+
+async function cancelarRegistroSolicitud(id) {
+    try {
+        const usuario_id = localStorage.getItem("usuario_id")
+        await apiFetch(`${API}/${id}/registrarse`, {
+            method: "DELETE",
+            body: JSON.stringify({ usuario_id }),
+        })
         await cargarSolicitudes()
     } catch (error) {
         mostrarError(error.message)
@@ -90,8 +131,28 @@ function renderListaSolicitudes(solicitudes) {
     `).join("")
 }
 
+function renderListaSolicitudesAbiertas(solicitudes) {
+    const lista = document.getElementById("lista-solicitudes-abiertas")
+
+    if (!lista) return
+
+    if (solicitudes.length === 0) {
+        lista.innerHTML = "<li>No hay solicitudes disponibles por el momento.</li>"
+        return
+    }
+
+    lista.innerHTML = solicitudes.map(s => `
+        <li>
+            <strong>${s.nombre}</strong> — ${s.especie} (${s.raza})
+            ${s.registrado
+                ? `<button onclick="cancelarRegistroSolicitud(${s.id})">Cancelar registro</button>`
+                : `<button onclick="registrarseSolicitud(${s.id})">Registrarse</button>`}
+        </li>
+    `).join("")
+}
+
 function mostrarError(mensaje) {
-    const lista = document.getElementById("lista-solicitudes")
+    const lista = document.getElementById("lista-solicitudes") || document.getElementById("lista-solicitudes-abiertas")
     if (lista) {
         const errorLi = document.createElement("li")
         errorLi.className = "error"

@@ -13,6 +13,7 @@ class Solicitud(db.Model):
     # Clave foránea al usuario que hace la solicitud
     usuario_id = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False)
     usuario    = db.relationship("Usuario", back_populates="solicitudes")
+    inscripciones = db.relationship("Inscripcion", back_populates="solicitud", lazy=True)
 
     def __repr__(self):
         return f"<Solicitud {self.id}>"
