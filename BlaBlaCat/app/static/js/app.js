@@ -2,13 +2,12 @@
 
 const app = document.getElementById("app")
 
-// ─── Router ───────────────────────────────────────────────
-
 const routes = {
     "/":            renderHome,
     "/login":       renderLogin,
     "/registro":    renderRegistro,
     "/solicitudes": renderSolicitudes,
+    "/usuarios":    renderUsuarios,
 }
 
 function navigate(event, path) {
@@ -18,14 +17,19 @@ function navigate(event, path) {
 }
 
 function render(path) {
+    // Ruta dinámica /perfil/:id
+    if (path.startsWith("/perfil/")) {
+        const id = parseInt(path.split("/")[2])
+        cargarPerfil(id)
+        actualizarNav()
+        return
+    }
     const handler = routes[path] || renderNotFound
     handler()
     actualizarNav()
 }
 
 window.addEventListener("popstate", () => render(window.location.pathname))
-
-// ─── Utilidades ───────────────────────────────────────────
 
 function cloneTemplate(id) {
     return document.getElementById(id).content.cloneNode(true)
@@ -55,14 +59,11 @@ function renderLogin() {
         render("/solicitudes")
         return
     }
-
     app.innerHTML = ""
     app.appendChild(cloneTemplate("tpl-login"))
-
     document.getElementById("form-login").addEventListener("submit", async (e) => {
         e.preventDefault()
-        const data = Object.fromEntries(new FormData(e.target))
-        await login(data)
+        await login(Object.fromEntries(new FormData(e.target)))
     })
 }
 
@@ -72,14 +73,11 @@ function renderRegistro() {
         render("/solicitudes")
         return
     }
-
     app.innerHTML = ""
     app.appendChild(cloneTemplate("tpl-registro"))
-
     document.getElementById("form-registro").addEventListener("submit", async (e) => {
         e.preventDefault()
-        const data = Object.fromEntries(new FormData(e.target))
-        await registro(data)
+        await registro(Object.fromEntries(new FormData(e.target)))
     })
 }
 
@@ -89,21 +87,27 @@ function renderSolicitudes() {
         render("/login")
         return
     }
-
     app.innerHTML = ""
     app.appendChild(cloneTemplate("tpl-solicitudes"))
-
-    const form = document.getElementById("form-nueva-solicitud")
-    console.log("Formulario encontrado:", form)  // debe mostrar el elemento, no null
-
-    form.addEventListener("submit", async (e) => {
+    document.getElementById("form-nueva-solicitud").addEventListener("submit", async (e) => {
         e.preventDefault()
         const datos = Object.fromEntries(new FormData(e.target))
         datos.usuario_id = localStorage.getItem("usuario_id")
         await crearSolicitud(datos)
         e.target.reset()
-    });
+    })
     cargarSolicitudes()
+}
+
+function renderUsuarios() {
+    if (!localStorage.getItem("usuario_id")) {
+        window.history.pushState({}, "", "/login")
+        render("/login")
+        return
+    }
+    app.innerHTML = ""
+    app.appendChild(cloneTemplate("tpl-usuarios"))
+    cargarUsuarios()
 }
 
 // ─── Arranque ─────────────────────────────────────────────

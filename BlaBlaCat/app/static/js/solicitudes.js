@@ -2,31 +2,6 @@
 
 const API = "/api/solicitudes"
 
-// ─── Helpers ──────────────────────────────────────────────
-
-function getToken() {
-    return localStorage.getItem("token")
-}
-
-async function apiFetch(url, options = {}) {
-    const response = await fetch(url, {
-        ...options,
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${getToken()}`,
-            ...options.headers,
-        },
-    })
-
-    const data = await response.json()
-
-    if (!response.ok) {
-        throw new Error(data.error || "Error en la petición")
-    }
-
-    return data
-}
-
 // ─── CRUD ─────────────────────────────────────────────────
 
 async function cargarSolicitudes() {
@@ -36,8 +11,7 @@ async function cargarSolicitudes() {
 async function cargarMisSolicitudes() {
     try {
         const usuario_id = localStorage.getItem("usuario_id")
-        const url = usuario_id ? `${API}?usuario_id=${usuario_id}` : API
-        const solicitudes = await apiFetch(url)
+        const solicitudes = await apiFetch(`${API}?usuario_id=${usuario_id}`)
         renderListaSolicitudes(solicitudes)
     } catch (error) {
         mostrarError(error.message)
@@ -47,10 +21,9 @@ async function cargarMisSolicitudes() {
 async function cargarSolicitudesDisponibles() {
     try {
         const usuario_id = localStorage.getItem("usuario_id")
-        const url = usuario_id
-            ? `${API}?exclude_usuario_id=${usuario_id}&current_usuario_id=${usuario_id}`
-            : API
-        const solicitudes = await apiFetch(url)
+        const solicitudes = await apiFetch(
+            `${API}?exclude_usuario_id=${usuario_id}&current_usuario_id=${usuario_id}`
+        )
         renderListaSolicitudesAbiertas(solicitudes)
     } catch (error) {
         mostrarError(error.message)
@@ -59,7 +32,6 @@ async function cargarSolicitudesDisponibles() {
 
 async function crearSolicitud(datos) {
     try {
-        datos.usuario_id = localStorage.getItem("usuario_id")
         await apiFetch(API, {
             method: "POST",
             body: JSON.stringify({
@@ -78,6 +50,24 @@ async function crearSolicitud(datos) {
 async function eliminarSolicitud(id) {
     try {
         await apiFetch(`${API}/${id}`, { method: "DELETE" })
+        await cargarSolicitudes()
+    } catch (error) {
+        mostrarError(error.message)
+    }
+}
+
+async function modificarSolicitud(id) {
+    const usuario_id = localStorage.getItem("usuario_id")
+    const nombre  = prompt("Nuevo nombre:")
+    const especie = prompt("Nueva especie:")
+    const raza    = prompt("Nueva raza:")
+    if (nombre === null && especie === null && raza === null) return
+    const payload = { usuario_id }
+    if (nombre  && nombre  !== "") payload.nombre  = nombre
+    if (especie && especie !== "") payload.especie = especie
+    if (raza    && raza    !== "") payload.raza    = raza
+    try {
+        await apiFetch(`${API}/${id}`, { method: "PUT", body: JSON.stringify(payload) })
         await cargarSolicitudes()
     } catch (error) {
         mostrarError(error.message)
@@ -110,88 +100,131 @@ async function cancelarRegistroSolicitud(id) {
     }
 }
 
+async function verInscritos(solicitudId) {
+    try {
+        const inscritos = await apiFetch(`${API}/${solicitudId}/inscritos`)
+        const usuario_id = parseInt(localStorage.getItem("usuario_id"))
+        renderModalInscritos(solicitudId, inscritos, usuario_id)
+    } catch (error) {
+        mostrarError(error.message)
+    }
+}
+
+async function aceptarCuidador(solicitudId, cuidadorId) {
+    try {
+        const usuario_id = localStorage.getItem("usuario_id")
+        await apiFetch(`${API}/${solicitudId}/aceptar`, {
+            method: "POST",
+            body: JSON.stringify({ usuario_id, cuidador_id: cuidadorId }),
+        })
+        cerrarModal()
+        await cargarSolicitudes()
+    } catch (error) {
+        mostrarError(error.message)
+    }
+}
+
 // ─── Render ───────────────────────────────────────────────
 
 function renderListaSolicitudes(solicitudes) {
     const lista = document.getElementById("lista-solicitudes")
-
     if (!lista) return
 
     if (solicitudes.length === 0) {
-        lista.innerHTML = "<li>No tienes solicitudes todavía.</li>"
+        lista.innerHTML = "<li class='vacio'>No tienes solicitudes todavía.</li>"
         return
     }
 
     lista.innerHTML = solicitudes.map(s => `
-        <li>
-            <strong>${s.nombre}</strong> — ${s.especie} (${s.raza})
-            <button onclick="modificarSolicitud(${s.id})">Modificar</button>
-            <button onclick="eliminarSolicitud(${s.id})">Eliminar</button>
+        <li class="solicitud-item">
+            <div class="solicitud-info">
+                <strong>${s.nombre}</strong> — ${s.especie}${s.raza ? ` (${s.raza})` : ""}
+                ${s.cuidador_id
+                    ? `<span class="badge badge-aceptado">✅ Cuidador asignado</span>`
+                    : `<span class="badge badge-pendiente">⏳ Sin cuidador</span>`
+                }
+            </div>
+            <div class="solicitud-acciones">
+                ${s.cuidador_id
+                    ? `<button onclick="navigate(event, '/perfil/${s.cuidador_id}?solicitud=${s.id}')">Ver cuidador</button>`
+                    : `<button onclick="verInscritos(${s.id})">Ver inscritos</button>`
+                }
+                <button onclick="modificarSolicitud(${s.id})">Modificar</button>
+                <button class="btn-eliminar" onclick="eliminarSolicitud(${s.id})">Eliminar</button>
+            </div>
         </li>
     `).join("")
 }
 
 function renderListaSolicitudesAbiertas(solicitudes) {
     const lista = document.getElementById("lista-solicitudes-abiertas")
-
     if (!lista) return
 
     if (solicitudes.length === 0) {
-        lista.innerHTML = "<li>No hay solicitudes disponibles por el momento.</li>"
+        lista.innerHTML = "<li class='vacio'>No hay solicitudes disponibles por el momento.</li>"
         return
     }
 
     lista.innerHTML = solicitudes.map(s => `
-        <li>
-            <strong>${s.nombre}</strong> — ${s.especie} (${s.raza})
-            ${s.registrado
-                ? `<button onclick="cancelarRegistroSolicitud(${s.id})">Cancelar registro</button>`
-                : `<button onclick="registrarseSolicitud(${s.id})">Registrarse</button>`}
+        <li class="solicitud-item">
+            <div class="solicitud-info">
+                <strong>${s.nombre}</strong> — ${s.especie}${s.raza ? ` (${s.raza})` : ""}
+                ${s.cuidador_id
+                    ? `<span class="badge badge-aceptado">✅ Cuidador asignado</span>`
+                    : ""
+                }
+            </div>
+            <div class="solicitud-acciones">
+                ${s.cuidador_id
+                    ? ""
+                    : s.registrado
+                        ? `<button class="btn-secundario" onclick="cancelarRegistroSolicitud(${s.id})">Cancelar registro</button>`
+                        : `<button onclick="registrarseSolicitud(${s.id})">Registrarse</button>`
+                }
+            </div>
         </li>
     `).join("")
 }
 
-function mostrarError(mensaje) {
-    const lista = document.getElementById("lista-solicitudes") || document.getElementById("lista-solicitudes-abiertas")
-    if (lista) {
-        const errorLi = document.createElement("li")
-        errorLi.className = "error"
-        errorLi.textContent = mensaje
-        lista.appendChild(errorLi)
-        setTimeout(() => {
-            errorLi.remove()
-        }, 3000)
-    }
+function renderModalInscritos(solicitudId, inscritos, usuarioActual) {
+    let modal = document.getElementById("modal-inscritos")
+    if (modal) modal.remove()
+
+    modal = document.createElement("div")
+    modal.id = "modal-inscritos"
+    modal.className = "modal-overlay"
+
+    const cuerpo = inscritos.length === 0
+        ? "<p class='vacio'>Nadie se ha inscrito todavía.</p>"
+        : `<ul class="lista-inscritos">${inscritos.map(i => `
+            <li>
+                <span>${i.username}</span>
+                <button onclick="aceptarCuidador(${solicitudId}, ${i.usuario_id})">Aceptar</button>
+            </li>
+          `).join("")}</ul>`
+
+    modal.innerHTML = `
+        <div class="modal">
+            <h3>Inscritos en la solicitud</h3>
+            ${cuerpo}
+            <button class="btn-secundario" onclick="cerrarModal()">Cerrar</button>
+        </div>
+    `
+    document.body.appendChild(modal)
 }
 
+function cerrarModal() {
+    const modal = document.getElementById("modal-inscritos")
+    if (modal) modal.remove()
+}
 
-
-
-
-async function modificarSolicitud(id) {
-    const usuario_id = localStorage.getItem('usuario_id')
-    const nombre = prompt('Nuevo nombre:')
-    const especie = prompt('Nueva especie:')
-    const raza = prompt('Nueva raza:')
-
-    if (nombre === null && especie === null && raza === null) {
-        return
-    }
-
-    const payload = {
-        usuario_id,
-    }
-    if (nombre && nombre !== '') payload.nombre = nombre
-    if (especie && especie !== '') payload.especie = especie
-    if (raza && raza !== '') payload.raza = raza
-
-    try {
-        await apiFetch(`${API}/${id}`, {
-            method: 'PUT',
-            body: JSON.stringify(payload),
-        })
-        await cargarSolicitudes()
-    } catch (error) {
-        mostrarError(error.message)
-    }
+function mostrarError(mensaje) {
+    const lista = document.getElementById("lista-solicitudes")
+        || document.getElementById("lista-solicitudes-abiertas")
+    if (!lista) return
+    const errorLi = document.createElement("li")
+    errorLi.className = "error"
+    errorLi.textContent = mensaje
+    lista.appendChild(errorLi)
+    setTimeout(() => errorLi.remove(), 3000)
 }

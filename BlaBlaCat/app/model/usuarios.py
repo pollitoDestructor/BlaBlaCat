@@ -10,9 +10,9 @@ class Usuario(db.Model):
     password   = db.Column(db.String(256), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # Un usuario puede tener varias solicitudes
-    solicitudes = db.relationship("Solicitud", back_populates="usuario", lazy=True)
-    inscripciones = db.relationship("Inscripcion", back_populates="usuario", lazy=True)
+    solicitudes   = db.relationship("Solicitud",   back_populates="usuario",  lazy=True,
+                                    foreign_keys="Solicitud.usuario_id")
+    inscripciones = db.relationship("Inscripcion", back_populates="usuario",  lazy=True)
 
     def __repr__(self):
-        return f"<User {self.username}>"
+        return f"<Usuario {self.username}>"
