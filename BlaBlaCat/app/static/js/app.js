@@ -3,11 +3,14 @@
 const app = document.getElementById("app")
 
 const routes = {
-    "/":            renderHome,
-    "/login":       renderLogin,
-    "/registro":    renderRegistro,
-    "/solicitudes": renderSolicitudes,
-    "/usuarios":    renderUsuarios,
+    "/":                  renderHome,
+    "/login":             renderLogin,
+    "/registro":          renderRegistro,
+    "/solicitudes":       renderSolicitudes,
+    "/usuarios":          renderUsuarios,
+    "/proximas":          renderProximas,
+    "/admin/usuarios":    renderAdminUsuarios,
+    "/admin/solicitudes": renderAdminSolicitudes,
 }
 
 function navigate(event, path) {
@@ -17,7 +20,6 @@ function navigate(event, path) {
 }
 
 function render(path) {
-    // Ruta dinámica /perfil/:id
     if (path.startsWith("/perfil/")) {
         const id = parseInt(path.split("/")[2])
         cargarPerfil(id)
@@ -37,8 +39,18 @@ function cloneTemplate(id) {
 
 function actualizarNav() {
     const logueado = !!localStorage.getItem("usuario_id")
-    document.getElementById("nav-login").style.display  = logueado ? "none"   : "inline"
-    document.getElementById("nav-logout").style.display = logueado ? "inline" : "none"
+    const esAdmin  = localStorage.getItem("rol") === "administrador"
+
+    document.getElementById("nav-login").style.display        = logueado ? "none"   : "inline"
+    document.getElementById("nav-logout").style.display       = logueado ? "inline" : "none"
+    document.getElementById("nav-admin").style.display        = esAdmin  ? "inline" : "none"
+    document.getElementById("nav-solicitudes").style.display  = (logueado && !esAdmin) ? "inline" : "none"
+    document.getElementById("nav-cuidadores").style.display   = (logueado && !esAdmin) ? "inline" : "none"
+
+    if (logueado) {
+        const label = document.getElementById("nav-username")
+        if (label) label.textContent = localStorage.getItem("username") || ""
+    }
 }
 
 // ─── Vistas ───────────────────────────────────────────────
@@ -55,8 +67,9 @@ function renderNotFound() {
 
 function renderLogin() {
     if (localStorage.getItem("usuario_id")) {
-        window.history.pushState({}, "", "/solicitudes")
-        render("/solicitudes")
+        const destino = localStorage.getItem("rol") === "administrador" ? "/admin/usuarios" : "/solicitudes"
+        window.history.pushState({}, "", destino)
+        render(destino)
         return
     }
     app.innerHTML = ""
@@ -108,6 +121,34 @@ function renderUsuarios() {
     app.innerHTML = ""
     app.appendChild(cloneTemplate("tpl-usuarios"))
     cargarUsuarios()
+}
+
+function renderProximas() {
+    app.innerHTML = ""
+    app.appendChild(cloneTemplate("tpl-proximas"))
+    cargarProximas()
+}
+
+function renderAdminUsuarios() {
+    if (localStorage.getItem("rol") !== "administrador") {
+        window.history.pushState({}, "", "/")
+        render("/")
+        return
+    }
+    app.innerHTML = ""
+    app.appendChild(cloneTemplate("tpl-admin-usuarios"))
+    cargarListaUsuarios()
+}
+
+function renderAdminSolicitudes() {
+    if (localStorage.getItem("rol") !== "administrador") {
+        window.history.pushState({}, "", "/")
+        render("/")
+        return
+    }
+    app.innerHTML = ""
+    app.appendChild(cloneTemplate("tpl-admin-solicitudes"))
+    cargarCatalogoSolicitudes()
 }
 
 // ─── Arranque ─────────────────────────────────────────────

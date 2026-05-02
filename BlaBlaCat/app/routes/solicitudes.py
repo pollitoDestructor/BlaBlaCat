@@ -1,10 +1,19 @@
-# app/routes/solicitudes.py
 from flask import Blueprint, request, jsonify
+from datetime import datetime
 from ..extensions import db
 from ..model.solicitudes import Solicitud
 from ..model.inscripciones import Inscripcion
 
 solicitudes_bp = Blueprint("solicitudes", __name__)
+
+
+def parse_dt(valor):
+    if not valor:
+        return None
+    try:
+        return datetime.fromisoformat(valor)
+    except (ValueError, TypeError):
+        return None
 
 
 @solicitudes_bp.route("/", methods=["GET"])
@@ -30,14 +39,44 @@ def get_solicitudes():
 
     resultado = [
         {
-            "id":          s.id,
-            "usuario_id":  s.usuario_id,
-            "cuidador_id": s.cuidador_id,
-            "nombre":      s.nombre,
-            "especie":     s.especie,
-            "raza":        s.raza,
-            "registrado":  s.id in registros_existentes,
-            "valorada":    s.valoracion is not None,
+            "id":               s.id,
+            "usuario_id":       s.usuario_id,
+            "cuidador_id":      s.cuidador_id,
+            "nombre":           s.nombre,
+            "especie":          s.especie,
+            "raza":             s.raza,
+            "foto_url":         s.foto_url,
+            "horario_inicio":   s.horario_inicio.isoformat() if s.horario_inicio else None,
+            "horario_fin":      s.horario_fin.isoformat()    if s.horario_fin    else None,
+            "especificaciones": s.especificaciones,
+            "registrado":       s.id in registros_existentes,
+            "valorada":         s.valoracion is not None,
+        }
+        for s in solicitudes
+    ]
+    return jsonify(resultado), 200
+
+
+@solicitudes_bp.route("/proximas", methods=["GET"])
+def get_proximas():
+    """Solicitudes con horario_inicio en el futuro — vista pública."""
+    ahora = datetime.utcnow()
+    solicitudes = Solicitud.query.filter(
+        Solicitud.horario_inicio > ahora
+    ).order_by(Solicitud.horario_inicio).all()
+
+    resultado = [
+        {
+            "id":             s.id,
+            "nombre":         s.nombre,
+            "especie":        s.especie,
+            "raza":           s.raza,
+            "foto_url":       s.foto_url,
+            "horario_inicio": s.horario_inicio.isoformat() if s.horario_inicio else None,
+            "horario_fin":    s.horario_fin.isoformat()    if s.horario_fin    else None,
+            "especificaciones": s.especificaciones,
+            "cuidador_id":    s.cuidador_id,
+            "registrado":     False,  # se calcula en cliente si hace falta
         }
         for s in solicitudes
     ]
@@ -47,11 +86,19 @@ def get_solicitudes():
 @solicitudes_bp.route("/", methods=["POST"])
 def crear_solicitud():
     data = request.get_json()
+
+    if not data or not all(k in data for k in ("usuario_id", "nombre", "especie")):
+        return jsonify({"error": "Faltan campos: usuario_id, nombre, especie"}), 400
+
     nueva = Solicitud(
-        usuario_id = data["usuario_id"],
-        nombre     = data["nombre"],
-        especie    = data["especie"],
-        raza       = data.get("raza"),
+        usuario_id       = data["usuario_id"],
+        nombre           = data["nombre"],
+        especie          = data["especie"],
+        raza             = data.get("raza"),
+        foto_url         = data.get("foto_url"),
+        horario_inicio   = parse_dt(data.get("horario_inicio")),
+        horario_fin      = parse_dt(data.get("horario_fin")),
+        especificaciones = data.get("especificaciones"),
     )
     db.session.add(nueva)
     db.session.commit()
@@ -64,15 +111,17 @@ def modificar_solicitud(id):
     solicitud = Solicitud.query.get_or_404(id)
 
     usuario_id = data.get("usuario_id")
-    if usuario_id is not None:
-        usuario_id = int(usuario_id)
-
-    if solicitud.usuario_id != usuario_id:
+    if usuario_id is not None and solicitud.usuario_id != int(usuario_id):
         return jsonify({"error": "No tienes permiso para modificar esta solicitud"}), 403
 
-    solicitud.nombre  = data.get("nombre",  solicitud.nombre)
-    solicitud.especie = data.get("especie", solicitud.especie)
-    solicitud.raza    = data.get("raza",    solicitud.raza)
+    solicitud.nombre           = data.get("nombre",           solicitud.nombre)
+    solicitud.especie          = data.get("especie",          solicitud.especie)
+    solicitud.raza             = data.get("raza",             solicitud.raza)
+    solicitud.foto_url         = data.get("foto_url",         solicitud.foto_url)
+    solicitud.especificaciones = data.get("especificaciones", solicitud.especificaciones)
+    solicitud.horario_inicio   = parse_dt(data.get("horario_inicio")) or solicitud.horario_inicio
+    solicitud.horario_fin      = parse_dt(data.get("horario_fin"))    or solicitud.horario_fin
+
     db.session.commit()
     return jsonify({"mensaje": "Solicitud modificada"}), 200
 
@@ -89,29 +138,24 @@ def eliminar_solicitud(id):
 def registrarse_solicitud(id):
     data       = request.get_json() or {}
     usuario_id = data.get("usuario_id")
-
     if usuario_id is None:
         return jsonify({"error": "usuario_id requerido"}), 400
 
     solicitud = Solicitud.query.get_or_404(id)
-
     if solicitud.usuario_id == int(usuario_id):
         return jsonify({"error": "No puedes registrarte en tu propia solicitud"}), 403
-
     if Inscripcion.query.filter_by(solicitud_id=id, usuario_id=usuario_id).first():
         return jsonify({"error": "Ya estás registrado en esta solicitud"}), 409
 
-    nueva_inscripcion = Inscripcion(usuario_id=usuario_id, solicitud_id=id)
-    db.session.add(nueva_inscripcion)
+    db.session.add(Inscripcion(usuario_id=usuario_id, solicitud_id=id))
     db.session.commit()
-    return jsonify({"mensaje": "Te has registrado en la solicitud correctamente"}), 201
+    return jsonify({"mensaje": "Registro correcto"}), 201
 
 
 @solicitudes_bp.route("/<int:id>/registrarse", methods=["DELETE"])
 def cancelar_registro_solicitud(id):
     data       = request.get_json() or {}
     usuario_id = data.get("usuario_id")
-
     if usuario_id is None:
         return jsonify({"error": "usuario_id requerido"}), 400
 
@@ -121,31 +165,24 @@ def cancelar_registro_solicitud(id):
 
     db.session.delete(inscripcion)
     db.session.commit()
-    return jsonify({"mensaje": "Registro cancelado correctamente"}), 200
+    return jsonify({"mensaje": "Registro cancelado"}), 200
 
 
 @solicitudes_bp.route("/<int:id>/aceptar", methods=["POST"])
 def aceptar_cuidador(id):
-    """El dueño acepta una inscripción y asigna al cuidador."""
-    data           = request.get_json() or {}
-    usuario_id     = data.get("usuario_id")    # debe ser el dueño
-    cuidador_id    = data.get("cuidador_id")   # inscrito a aceptar
+    data        = request.get_json() or {}
+    usuario_id  = data.get("usuario_id")
+    cuidador_id = data.get("cuidador_id")
 
     if not usuario_id or not cuidador_id:
         return jsonify({"error": "usuario_id y cuidador_id son obligatorios"}), 400
 
     solicitud = Solicitud.query.get_or_404(id)
-
     if solicitud.usuario_id != int(usuario_id):
         return jsonify({"error": "Solo el dueño puede aceptar un cuidador"}), 403
-
     if solicitud.cuidador_id is not None:
         return jsonify({"error": "Esta solicitud ya tiene cuidador asignado"}), 409
-
-    inscripcion = Inscripcion.query.filter_by(
-        solicitud_id=id, usuario_id=cuidador_id
-    ).first()
-    if not inscripcion:
+    if not Inscripcion.query.filter_by(solicitud_id=id, usuario_id=cuidador_id).first():
         return jsonify({"error": "Ese usuario no está inscrito en esta solicitud"}), 404
 
     solicitud.cuidador_id = int(cuidador_id)
@@ -155,13 +192,8 @@ def aceptar_cuidador(id):
 
 @solicitudes_bp.route("/<int:id>/inscritos", methods=["GET"])
 def get_inscritos(id):
-    """Lista de usuarios inscritos en una solicitud."""
     solicitud = Solicitud.query.get_or_404(id)
-    inscritos = [
-        {
-            "usuario_id": ins.usuario_id,
-            "username":   ins.usuario.username,
-        }
+    return jsonify([
+        {"usuario_id": ins.usuario_id, "username": ins.usuario.username}
         for ins in solicitud.inscripciones
-    ]
-    return jsonify(inscritos), 200
+    ]), 200
