@@ -44,8 +44,8 @@ function actualizarNav() {
     document.getElementById("nav-login").style.display        = logueado ? "none"   : "inline"
     document.getElementById("nav-logout").style.display       = logueado ? "inline" : "none"
     document.getElementById("nav-admin").style.display        = esAdmin  ? "inline" : "none"
-    document.getElementById("nav-solicitudes").style.display  = (logueado && !esAdmin) ? "inline" : "none"
-    document.getElementById("nav-cuidadores").style.display   = (logueado && !esAdmin) ? "inline" : "none"
+    document.getElementById("nav-solicitudes").style.display  = logueado ? "inline" : "none"
+    document.getElementById("nav-cuidadores").style.display   = logueado ? "inline" : "none"
 
     if (logueado) {
         const label = document.getElementById("nav-username")

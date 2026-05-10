@@ -4,14 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ac3f3065-42a4-4774-93f9-5df11a439d63" name="Changes" comment="MERGEADO">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_22_4_26,_10_57_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_22_4_26,_10_57_[Changes]1/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_22_4_26__10_57__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_22_4_26__10_57__Changes_1.xml" beforeDir="false" />
+    <list default="true" id="ac3f3065-42a4-4774-93f9-5df11a439d63" name="Changes" comment="prueba">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BlaBlaCat/instance/app.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BlaBlaCat/app/static/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/BlaBlaCat/app/static/js/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BlaBlaCat/app/static/js/solicitudes.js" beforeDir="false" afterPath="$PROJECT_DIR$/BlaBlaCat/app/static/js/solicitudes.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -144,7 +140,15 @@
       <option name="project" value="LOCAL" />
       <updated>1777740866243</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="prueba">
+      <option name="closed" value="true" />
+      <created>1777825497745</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1777825497745</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -165,6 +169,7 @@
     <MESSAGE value="Css y apartado visual" />
     <MESSAGE value="Valoraciones y perfil de usuarios completados" />
     <MESSAGE value="MERGEADO" />
-    <option name="LAST_COMMIT_MESSAGE" value="MERGEADO" />
+    <MESSAGE value="prueba" />
+    <option name="LAST_COMMIT_MESSAGE" value="prueba" />
   </component>
 </project>

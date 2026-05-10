@@ -62,20 +62,68 @@ async function eliminarSolicitud(id) {
 
 async function modificarSolicitud(id) {
     const usuario_id = localStorage.getItem("usuario_id")
-    const nombre  = prompt("Nuevo nombre:")
-    const especie = prompt("Nueva especie:")
-    const raza    = prompt("Nueva raza:")
-    if (nombre === null && especie === null && raza === null) return
-    const payload = { usuario_id }
-    if (nombre  && nombre  !== "") payload.nombre  = nombre
-    if (especie && especie !== "") payload.especie = especie
-    if (raza    && raza    !== "") payload.raza    = raza
+
+    let solicitudActual
     try {
-        await apiFetch(`${API}/${id}`, { method: "PUT", body: JSON.stringify(payload) })
-        await cargarSolicitudes()
-    } catch (error) {
-        mostrarError(error.message)
-    }
+        const todas = await apiFetch(`${API}?usuario_id=${usuario_id}`)
+        solicitudActual = todas.find(s => s.id === id) || {}
+    } catch { solicitudActual = {} }
+
+    // Crea el modal
+    let modal = document.getElementById("modal-modificar")
+    if (modal) modal.remove()
+    modal = document.createElement("div")
+    modal.id = "modal-modificar"
+    modal.className = "modal-overlay"
+    modal.innerHTML = `
+        <div class="modal">
+            <h3>Modificar solicitud</h3>
+            <form id="form-modificar">
+                <input type="text" name="nombre"  placeholder="Nombre de la mascota"
+                       value="${solicitudActual.nombre  || ""}">
+                <input type="text" name="especie" placeholder="Especie"
+                       value="${solicitudActual.especie || ""}">
+                <input type="text" name="raza"    placeholder="Raza (opcional)"
+                       value="${solicitudActual.raza    || ""}">
+                <label style="font-size:.88rem;color:var(--text-muted)">Inicio del cuidado</label>
+                <input type="datetime-local" name="horario_inicio"
+                       value="${solicitudActual.horario_inicio
+                           ? solicitudActual.horario_inicio.slice(0, 16)
+                           : ""}">
+                <label style="font-size:.88rem;color:var(--text-muted)">Fin del cuidado</label>
+                <input type="datetime-local" name="horario_fin"
+                       value="${solicitudActual.horario_fin
+                           ? solicitudActual.horario_fin.slice(0, 16)
+                           : ""}">
+                <textarea name="especificaciones"
+                          placeholder="Especificaciones...">${solicitudActual.especificaciones || ""}</textarea>
+                <div style="display:flex;gap:.5rem;margin-top:.5rem">
+                    <button type="submit">Guardar</button>
+                    <button type="button" class="btn-secundario"
+                            onclick="cerrarModalModificar()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    `
+    document.body.appendChild(modal)
+
+    document.getElementById("form-modificar").addEventListener("submit", async (e) => {
+        e.preventDefault()
+        const datos = Object.fromEntries(new FormData(e.target))
+        datos.usuario_id = usuario_id
+        try {
+            await apiFetch(`${API}/${id}`, { method: "PUT", body: JSON.stringify(datos) })
+            cerrarModalModificar()
+            await cargarSolicitudes()
+        } catch (error) {
+            mostrarError(error.message)
+        }
+    })
+}
+
+function cerrarModalModificar() {
+    const modal = document.getElementById("modal-modificar")
+    if (modal) modal.remove()
 }
 
 async function registrarseSolicitud(id) {
